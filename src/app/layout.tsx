@@ -2,7 +2,6 @@ import './globals.css';
 import type { Metadata } from 'next';
 // import ReownProvider from '@/context/ReownProvider';
 import ContextProvider from '@/context';
-import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'Nadxel App',

@@ -20,14 +20,8 @@ ws.onerror = (error) => {
   console.error('WebSocket error:', error);
 };
 
-export function isValidLeaderboardEntry(entry: any): boolean {
-  return (
-    entry &&
-    typeof entry.address === 'string' &&
-    entry.address.length > 0 &&
-    typeof entry.score === 'number' &&
-    entry.score >= 0
-  );
+export function isValidLeaderboardEntry(entry: LeaderboardEntry): boolean {
+  return entry && typeof entry.score === 'number' && typeof entry.address === 'string';
 }
 
 export function sendScoreToServer(score: number, address: string, messageElement: HTMLElement) {

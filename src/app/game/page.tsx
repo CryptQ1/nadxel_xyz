@@ -1,13 +1,12 @@
 // app/game/page.tsx
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState ,useMemo  } from 'react';
 import { useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import * as THREE from 'three';
 import styles from '../../styles/Game.module.css';
-import ConnectButton from '@/components/ConnectButton';
 import { ws, sendScoreToServer, isValidLeaderboardEntry } from '../../lib/server';
-import { Block, startGame, resetGameData, cutBlock, spawnNewBlock, stopAnimation } from '../../lib/gameLogic';
+import { startGame, resetGameData, cutBlock, spawnNewBlock, stopAnimation } from '../../lib/gameLogic';
 import Head from 'next/head';
 import { useAppKit } from '@reown/appkit/react';
 import { contractAddress, contractABI } from '../../lib/web3Integrate';
@@ -22,7 +21,6 @@ export default function Game() {
   const leaderboardRef = useRef<HTMLDivElement>(null);
   const { open } = useAppKit();
 
-  // Hàm lưu và tải leaderboard từ localStorage
   const saveLeaderboardToCache = (data: LeaderboardEntry[]) => {
     try {
       localStorage.setItem('leaderboard', JSON.stringify(data));
@@ -41,11 +39,8 @@ export default function Game() {
     }
   };
 
-  // Khai báo trạng thái
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [clickCooldown, setClickCooldown] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(loadLeaderboardFromCache());
   const [isLeaderboardVisible, setIsLeaderboardVisible] = useState(false);
@@ -53,35 +48,33 @@ export default function Game() {
   const { disconnect } = useDisconnect();
   const [error, setError] = useState<string | null>(null);
 
-  // Wagmi hooks để tương tác với hợp đồng
   const { data: hash, writeContract, isPending: isTxPending, error: txError } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  // Đọc PLAY_FEE từ hợp đồng
-  const { data: playFee } = useReadContract({
+  const { data: playFee, isLoading: isPlayFeeLoading, isError: isPlayFeeError } = useReadContract({
     address: contractAddress,
     abi: contractABI,
     functionName: 'PLAY_FEE',
   });
 
-  // Đọc block.timestamp từ blockchain để đồng bộ (giữ lại nhưng không dùng cho startGame)
-  const { data: blockTimestamp } = useReadContract({
+  const { data } = useReadContract({
     address: contractAddress,
     abi: contractABI,
     functionName: 'getPlayerData',
     args: [address],
-    select: (data) => data[1], // Lấy lastPlayed làm ước lượng timestamp
   });
 
+  const blockTimestamp = useMemo(() => (data ? data[1] : undefined), [data]);
+
   useEffect(() => {
-    // Thiết lập scene, camera, renderer
+    if (typeof window === 'undefined') return; // Đảm bảo chạy trên client
+
     if (!canvasRef.current) {
       console.error('Canvas ref does not exist');
       setError('Cannot initialize canvas');
       return;
     }
+
     window.scene = new THREE.Scene();
     window.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     window.renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvasRef.current });
@@ -90,14 +83,13 @@ export default function Game() {
 
     const updateCamera = () => {
       const aspect = window.innerWidth / window.innerHeight;
-      const offsetX = window.innerWidth < 768 ? -1 : -2;
-      camera.aspect = aspect;
-      camera.position.set(20, 15, 15);
-      camera.lookAt(0, 0, 0);
-      camera.rotation.x = -Math.PI / 2.5;
-      camera.rotation.z = Math.PI / 1.1;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      window.camera.aspect = aspect;
+      window.camera.position.set(20, 15, 15); // Sửa lỗi `amera`
+      window.camera.lookAt(0, 0, 0);
+      window.camera.rotation.x = -Math.PI / 2.5;
+      window.camera.rotation.z = Math.PI / 1.1;
+      window.camera.updateProjectionMatrix();
+      window.renderer.setSize(window.innerWidth, window.innerHeight);
     };
     updateCamera();
 
@@ -107,14 +99,12 @@ export default function Game() {
     };
     window.addEventListener('resize', handleResize);
 
-    // Kiểm tra WebGL
     if (!window.renderer.getContext()) {
       console.error('WebGL is not supported');
       setError('Your browser does not support WebGL');
       return;
     }
 
-    // Khởi tạo biến toàn cục
     window.bounds = 12.5;
     window.stack = [];
     window.fallingBlocks = [];
@@ -126,29 +116,34 @@ export default function Game() {
     window.clickCooldown = false;
     window.animationId = null;
 
-    // Cập nhật wallet address từ Wagmi
+    const connectWeb3Screen = document.getElementById('connectweb3-screen');
+    const initialScreen = document.getElementById('initial-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const walletGreeting = document.getElementById('wallet-greeting');
+
     if (isConnected && address) {
       setWalletAddress(address.toLowerCase());
-      document.getElementById('connectweb3-screen')!.style.display = 'none';
-      document.getElementById('initial-screen')!.style.display = 'flex';
-      document.getElementById('wallet-greeting')!.textContent = `Welcome ${address.slice(0, 2)}...${address.slice(-4)}!`;
+      if (connectWeb3Screen) connectWeb3Screen.style.display = 'none';
+      if (initialScreen) initialScreen.style.display = 'flex';
+      if (walletGreeting) walletGreeting.textContent = `Welcome ${address.slice(0, 2)}...${address.slice(-4)}!`;
     } else {
       setWalletAddress('');
-      document.getElementById('connectweb3-screen')!.style.display = 'flex';
-      document.getElementById('initial-screen')!.style.display = 'none';
-      document.getElementById('game-screen')!.style.display = 'none';
+      if (connectWeb3Screen) connectWeb3Screen.style.display = 'flex';
+      if (initialScreen) initialScreen.style.display = 'none';
+      if (gameScreen) gameScreen.style.display = 'none';
     }
 
-    // Xử lý WebSocket cho leaderboard
+    interface WebSocketMessage {
+      type: string;
+      data: { address: string; score: number }[];
+    }
+
     ws.onmessage = (event) => {
       try {
-        const message = JSON.parse(event.data);
-        console.log('Received WebSocket message:', JSON.stringify(message, null, 2));
+        const message: WebSocketMessage = JSON.parse(event.data);
         if (message.type === 'leaderboard') {
-          const rawData = message.data;
-          console.log('Raw leaderboard data:', JSON.stringify(rawData, null, 2));
-          const newData = rawData
-            .map((entry: any) => ({
+          const newData = message.data
+            .map((entry) => ({
               score: Number(entry.score),
               address: entry.address.toLowerCase(),
             }))
@@ -162,10 +157,8 @@ export default function Game() {
               }
               return acc;
             }, []);
-          console.log('Filtered and reduced leaderboard data:', JSON.stringify(newData, null, 2));
           setLeaderboardData([...newData]);
           saveLeaderboardToCache(newData);
-          console.log('leaderboardData updated:', JSON.stringify(newData, null, 2));
         }
       } catch (error) {
         console.error('WebSocket message error:', error);
@@ -255,26 +248,43 @@ export default function Game() {
   }, [isLeaderboardVisible]);
 
   const handlePlayNow = async () => {
+    const initialMessage = document.getElementById('initial-message');
+    const loadingBar = document.getElementById('loading-bar');
+
     if (!walletAddress) {
       console.log('Wallet not connected');
-      document.getElementById('initial-message')!.textContent = 'Please connect your wallet first!';
+      if (initialMessage) {
+        initialMessage.textContent = 'Please connect your wallet first!';
+      }
       return;
     }
 
-    if (!playFee) {
+    if (isPlayFeeLoading) {
+      console.log('PLAY_FEE is still loading');
+      if (initialMessage) {
+        initialMessage.textContent = 'Loading play fee, please wait...';
+      }
+      return;
+    }
+
+    if (isPlayFeeError || !playFee) {
       console.log('Unable to fetch PLAY_FEE');
-      document.getElementById('initial-message')!.textContent = 'Unable to fetch play fee!';
+      if (initialMessage) {
+        initialMessage.textContent = 'Unable to fetch play fee!';
+      }
       return;
     }
 
     console.log('Starting blockchain transaction to play game with wallet:', walletAddress);
-    const loadingBar = document.getElementById('loading-bar')!;
-    loadingBar.style.display = 'block';
-    loadingBar.classList.add('active');
-    document.getElementById('initial-message')!.textContent = 'Please confirm the transaction...';
+    if (loadingBar) {
+      loadingBar.style.display = 'block';
+      loadingBar.classList.add('active');
+    }
+    if (initialMessage) {
+      initialMessage.textContent = 'Please confirm the transaction...';
+    }
 
     try {
-      // Gửi giao dịch blockchain để bắt đầu game
       writeContract({
         address: contractAddress,
         abi: contractABI,
@@ -284,9 +294,13 @@ export default function Game() {
     } catch (err) {
       console.error('Error during transaction:', err);
       setError('Failed to start game! Transaction error.');
-      document.getElementById('initial-message')!.textContent = 'Failed to start game! Please try again.';
-      loadingBar.style.display = 'none';
-      loadingBar.classList.remove('active');
+      if (initialMessage) {
+        initialMessage.textContent = 'Failed to start game! Please try again.';
+      }
+      if (loadingBar) {
+        loadingBar.style.display = 'none';
+        loadingBar.classList.remove('active');
+      }
     }
   };
 
@@ -311,7 +325,6 @@ export default function Game() {
       resetGameData();
       setScore(0);
       setGameOver(false);
-      setGameStarted(true);
       startGame();
       window.clickCooldown = true;
       setTimeout(() => {
@@ -339,7 +352,6 @@ export default function Game() {
     resetGameData();
     setScore(0);
     setGameOver(false);
-    setGameStarted(false);
     document.getElementById('game-screen')!.style.display = 'none';
     document.getElementById('initial-screen')!.style.display = 'flex';
     // Xóa scene và làm mới canvas
@@ -412,10 +424,6 @@ export default function Game() {
       <Head>
         <title>Nadxel Game</title>
         <meta name="description" content="Play Block Game" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-          rel="stylesheet"
-        />
       </Head>
       <style jsx global>{`
         body {

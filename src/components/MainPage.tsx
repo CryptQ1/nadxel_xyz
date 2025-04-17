@@ -11,11 +11,6 @@ export default function MainPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const router = useRouter();
 
-  const handlePlayNow = () => {
-    console.log('Play Now clicked, navigating to /game');
-    window.open('/game', '_blank', 'width=500,height=1000');
-  };
-
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };

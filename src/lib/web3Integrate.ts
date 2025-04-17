@@ -1,4 +1,4 @@
-// src/lib/web3Integrate.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const contractAddress = '0xD73cbF0e3E309Ee958Fc9eeC0Bb90c036948c973';
 export const contractABI = [
 	{

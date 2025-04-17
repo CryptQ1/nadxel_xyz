@@ -18,7 +18,7 @@ export function useParticleAnimation() {
     };
     resizeCanvas();
 
-    let particlesArray: Particle[] = [];
+    const particlesArray: Particle[] = [];
 
     class Particle {
       x: number;
@@ -56,7 +56,7 @@ export function useParticleAnimation() {
       }
     }
 
-    let mouse = { x: null as number | null, y: null as number | null };
+    const mouse = { x: null as number | null, y: null as number | null };
 
     const handleMouseMove = (e: MouseEvent) => {
       mouse.x = e.pageX;

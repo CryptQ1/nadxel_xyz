@@ -1,6 +1,5 @@
 'use client';
 
-import { useRef } from 'react';
 import { useParticleAnimation } from '@/hooks/useParticleAnimation';
 
 export default function ParticleCanvas() {
