@@ -1,0 +1,356 @@
+/* styles/Game.module.css */
+.body {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #111;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.connectWeb3Screen,
+.initialScreen,
+.gameScreen {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.connectWeb3Screen,
+.initialScreen {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.gameScreen {
+  background: transparent; /* Loại bỏ nền mờ để canvas sáng rõ */
+}
+
+.connectWeb3Text,
+.readyToPlay {
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.initialConnectWallet,
+.initialDisconnectWallet,
+.backButton,
+.connectWallet,
+.playAgain,
+.leaderboardButtonInitial {
+  font-family: 'Press Start 2P', cursive;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #00ff00;
+  color: #000;
+  border: 2px solid #000;
+  margin: 10px;
+}
+
+.initialButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadingBar {
+  width: 200px;
+  height: 20px;
+  background: #333;
+  display: none;
+}
+
+.loadingProgress {
+  width: 0;
+  height: 100%;
+  background: #00ff00;
+}
+
+.errorMessage {
+  color: red;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+.socialLinks {
+  position: fixed;
+  bottom: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.socialLinks a {
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+}
+
+.decorText {
+  position: absolute;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(7px, 2vw, 10px);
+    text-shadow: 0 0 5px currentColor;
+    animation: floatText 3s infinite ease-in-out;
+}
+
+.btc { color: #ff00ff; bottom: 15%; left: 80%; animation-delay: 2s; }
+.eth { color: #00ff00; top: 15%; left: 10%; animation-delay: 0.5s; }
+.mon { color: #00ffff; bottom: 20%; right: 80%; animation-delay: 1.5s; }
+.nad {color: #19dcdc; top: 20%; right: 20%; animation-delay: 1.5s; }
+
+
+.walletGreeting {
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.header {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 clamp(5px, 1vw, 10px);
+  z-index: 2;
+}
+
+.centerDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(5px, 1vw, 8px); /* Giảm khoảng cách để tránh chồng chéo */
+}
+
+.walletAddress,
+.scoreDisplay {
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  font-size: clamp(10px, 2vw, 12px); /* Giảm font-size cho di động */
+  text-align: center;
+  white-space: nowrap; /* Ngăn wrap văn bản */
+}
+
+.backButton,
+.leaderboardButton {
+  font-family: 'Press Start 2P', cursive;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #00ff00;
+  color: #000;
+  border: 2px solid #000;
+  margin: 10px;
+}
+
+.backButton:hover,
+.leaderboardButton:hover {
+  background: #00cc00;
+  box-shadow: 0 0 6px #00ff00, 0 0 12px #00ff00;
+  transform: scale(1.05);
+}
+
+.gameOver {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  text-align: center;
+  z-index: 2;
+}
+
+.gameOverScore,
+.highScore {
+  margin: 10px 0;
+}
+
+.gameOverButtons {
+  margin-top: 20px;
+}
+
+.leaderboardButtonInitial {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-family: 'Press Start 2P', cursive;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #00ff00;
+  color: #000;
+  border: 2px solid #000;
+  margin: 10px;
+}
+
+.leaderboardDisplayInitial {
+  display: none;
+}
+
+.leaderboardDisplay {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  padding: clamp(20px, 4vw, 30px);
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 20;
+  border: 3px solid #00ff00;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+}
+
+.leaderboardDisplay.active {
+  display: block;
+}
+
+.leaderboardDisplay::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+.leaderboardTable {
+  width: 100%;
+  max-width: 500px;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.leaderboardTable th,
+.leaderboardTable td {
+  padding: 10px;
+  border: 1px solid #00ff00;
+  text-align: center;
+  font-size: clamp(12px, 2.5vw, 14px);
+}
+
+.playerHighlight {
+  background: #00ff00;
+  color: #000;
+}
+
+.closeLeaderboardButton {
+  font-family: 'Press Start 2P', cursive;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: #ff0000;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 5px;
+  display: block;
+  margin: 10px auto 20px auto;
+  transition: all 0.3s ease;
+}
+
+.closeLeaderboardButton:hover {
+  background: #cc0000;
+  box-shadow: 0 0 6px #ff0000;
+}
+
+.ConnectButton {
+  font-family: 'Press Start 2P', cursive;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #00ff00;
+  color: #000;
+  border: 2px solid #000;
+  margin: 10px;
+}
+
+.ConnectButton:hover {
+  background: #00cc00;
+}
+
+/* Media query cho màn hình nhỏ hơn 480px */
+@media (max-width: 480px) {
+  .walletAddress,
+  .scoreDisplay {
+    font-size: clamp(8px, 1.8vw, 10px); /* Giảm thêm font-size trên di động nhỏ */
+  }
+
+  .backButton,
+  .leaderboardButton {
+    padding: clamp(3px, 0.8vw, 6px) clamp(6px, 1.5vw, 10px);
+    font-size: clamp(7px, 1.6vw, 9px);
+  }
+
+  .header {
+    padding: 0 clamp(3px, 0.8vw, 8px);
+    top: 5px; /* Giảm khoảng cách trên cùng */
+  }
+
+  .centerDisplay {
+    gap: clamp(3px, 0.8vw, 6px);
+  }
+}
+
+/* Media query cho màn hình nhỏ hơn 480px */
+@media (max-width: 749px) {
+  .walletAddress,
+  .scoreDisplay {
+    font-size: clamp(8px, 1.8vw, 10px); /* Giảm thêm font-size trên di động nhỏ */
+  }
+
+  .backButton,
+  .leaderboardButton {
+    padding: clamp(3px, 0.8vw, 6px) clamp(6px, 1.5vw, 10px);
+    font-size: clamp(7px, 1.6vw, 9px);
+  }
+
+  .header {
+    padding: 0 clamp(3px, 0.8vw, 8px);
+    top: 5px; /* Giảm khoảng cách trên cùng */
+  }
+
+  .centerDisplay {
+    gap: clamp(3px, 0.8vw, 6px);
+  }
+}

@@ -1,0 +1,504 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* App.css */
+.App {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(251, 250, 249);
+  overflow-x: hidden;
+  font-family: 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+}
+
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgb(251, 250, 249);
+  animation: pixelGlow 4s infinite alternate;
+  z-index: -1;
+  image-rendering: pixelated;
+}
+
+@keyframes pixelGlow {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  image-rendering: pixelated;
+}
+
+.header {
+  position: absolute;
+  top: 2vh;
+  left: 2vw;
+  z-index: 4;
+}
+
+.logo-container {
+  width: 200px;
+  height: 200px;
+}
+
+.logo-image {
+  width: clamp(100%, 20vw, 100%);
+  height: 70px;
+  image-rendering: pixelated;
+}
+
+.main-section {
+  margin-top: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2vw;
+  z-index: 2;
+}
+
+.button-container {
+  text-align: center;
+  margin: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(10px, 2vw, 15px);
+  z-index: 5;
+}
+
+.coming-soon-btn {
+  width: 300px;
+  margin-left: 20px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 20px;
+  color: #fff;
+  background-color: rgb(32, 0, 83);
+  padding: 15px 35px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  text-transform: uppercase;
+  transition: all 0.1s ease;
+  image-rendering: pixelated;
+  clip-path: polygon(
+    20% 0%,
+    80% 0%,
+    100% 20%,
+    100% 80%,
+    80% 100%,
+    20% 100%,
+    0% 80%,
+    0% 20%
+  );
+  animation: pixelPulse 2s infinite;
+}
+
+@keyframes pixelPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.coming-soon-btn:hover {
+  background-color: rgb(50, 20, 100);
+  filter: brightness(1.2);
+}
+
+#info-section {
+  margin: 20px;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 2vh;
+}
+
+
+#animation-area {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 cột */
+  grid-template-rows: repeat(2, 1fr); /* 2 hàng */
+  gap: 20px; /* Khoảng cách giữa các hình ảnh */
+  margin-top: 30px;
+  width: clamp(100%, 40vw, 100%); /* Chiều rộng cố định */
+  height: clamp(100%, 40vw, 100%); /* Chiều cao bằng chiều rộng để thành hình vuông */
+  image-rendering: pixelated;
+  overflow: hidden; /* Đảm bảo hình ảnh không tràn ra ngoài */
+}
+
+
+#animation-area img {
+  border-radius: 30px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Đảm bảo hình ảnh lấp đầy ô mà không bị méo */
+  image-rendering: pixelated;
+}
+
+#animation-area :hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+#text-area {
+  margin-top: 30px;
+  width: 100%;
+  padding: 2vw;
+  line-height: 15px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1.5vw, 10px);
+  color: rgb(32, 0, 83);
+  image-rendering: pixelated;
+}
+
+#social-links {
+  margin-top: 10px;
+  position: absolute;
+  top: 1vh;
+  right: clamp(5px, 1vw, 20px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(5px, 1vw, 20px);
+  z-index: 4;
+}
+
+.social-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 2vw, 10px);
+  color: rgb(32, 0, 83);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  image-rendering: pixelated;
+}
+
+.social-text:hover {
+  color: rgb(230, 65, 32);
+}
+
+#scroll-section {
+  width: 100%;
+  height: clamp(150px, 30vh, 300px);
+  background: rgb(32, 0, 83);
+  overflow-x: auto; /* Cho phép cuộn ngang */
+  overflow-y: hidden;
+  position: relative;
+  z-index: 1;
+  image-rendering: pixelated;
+  -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+  scroll-behavior: smooth; /* Hành vi cuộn mượt */
+  touch-action: pan-x; /* Giới hạn cử chỉ chạm ở hướng ngang */
+}
+
+/* Ẩn thanh cuộn ngang trên tất cả trình duyệt */
+#scroll-section::-webkit-scrollbar {
+  display: none; /* Ẩn thanh cuộn trên Chrome, Safari, Edge */
+}
+
+#scroll-section {
+  -ms-overflow-style: none; /* Ẩn thanh cuộn trên IE và Edge cũ */
+  scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+}
+
+#scroll-content {
+  width: 2000px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#scroll-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(16px, 4vw, 48px);
+  color: rgb(251, 250, 249);
+  text-shadow: 0 0 7.5px rgb(251, 250, 249), 0 0 15px rgb(251, 250, 249);
+  position: absolute;
+  white-space: nowrap;
+  image-rendering: pixelated;
+}
+
+#faq-section {
+  margin: 50px;
+  width: 90%;
+  max-width: 800px;
+  margin: clamp(20px, 5vh, 40px) auto;
+  text-align: center;
+}
+
+#faq-section h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 3vw, 24px);
+  color: rgb(32, 0, 83);
+}
+
+.faq-item {
+  margin-bottom: 1vh;
+}
+
+.faq-question {
+  background: transparent;
+  border: 2px solid rgb(32, 0, 83);
+  color: rgb(32, 0, 83);
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 2vw, 12px);
+  padding: clamp(5px, 1vw, 10px);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  image-rendering: pixelated;
+  transition: background-color 0.3s;
+}
+
+.faq-question:hover {
+  background-color: rgba(32, 0, 83, 0.1);
+}
+
+.faq-answer {
+  padding: clamp(5px, 1vw, 10px);
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1.5vw, 10px);
+  color: rgb(32, 0, 83);
+  background: rgba(251, 250, 249, 0.9);
+  border: 2px solid rgb(32, 0, 83);
+  border-top: none;
+  image-rendering: pixelated;
+}
+
+#extended-section {
+  width: 100%;
+  height: clamp(5vh, 10vh, 10vh);
+  background: rgb(251, 250, 249);
+  position: relative;
+  image-rendering: pixelated;
+}
+
+#footer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: clamp(3px, 1vw, 5px);
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 2vw, 10px);
+  color: rgb(32, 0, 83);
+  image-rendering: pixelated;
+}
+
+.footer-logo {
+  width: clamp(15px, 3vw, 40px);
+  height: clamp(15px, 3vw, 40px);
+  image-rendering: pixelated;
+}
+
+.game-page {
+  width: 100%;
+  height: 100vh;
+}
+
+.game-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  image-rendering: pixelated;
+}
+
+.back-btn {
+  position: absolute;
+  top: clamp(5px, 1vh, 10px);
+  left: clamp(5px, 1vw, 10px);
+  background-color: transparent;
+  padding: clamp(5px, 1vw, 10px) clamp(10px, 2vw, 20px);
+  border-radius: clamp(5px, 1vw, 10px);
+  cursor: pointer;
+  font-size: clamp(10px, 2vw, 16px);
+  font-family: 'Press Start 2P', monospace;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  text-shadow: 0 0 3.75px #00ff00;
+  box-shadow: 0 0 7.5px #00ff00;
+  transition: all 0.3s;
+  z-index: 11;
+  image-rendering: pixelated;
+  color: #00ff00;
+  border: 3px solid #00ff00;
+  margin: clamp(5px, 1vw, 5px);
+  image-rendering: pixelated;
+}
+
+.back-btn:hover {
+  background-color: rgba(0, 255, 0, 0.2);
+  box-shadow: 0 0 11.25px rgb(32, 0, 83);
+}
+
+.discord-link {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.discord-link::before {
+  content: 'DISCORD';
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.discord-link:hover::before {
+  transform: translateY(-100%);
+}
+
+.discord-link::after {
+  content: 'SOON';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.discord-link:hover::after {
+  transform: translateY(-100%);
+}
+
+/* Media Queries cho iPad và iPhone */
+@media (min-width: 768px) {
+  #info-section {
+    flex-direction: row;
+  }
+
+  #animation-area {
+    width: 40%;
+  }
+
+  #text-area {
+    width: 65%;
+  }
+
+  .back-btn {
+    font-size: clamp(8px, 2vw, 14px);
+    padding: clamp(4px, 1vw, 8px) clamp(8px, 2vw, 15px);
+  }
+}
+
+@media (max-width: 767px) {
+
+  .logo-container {
+    width: 150px;
+    height: 150px;
+  }
+
+  .header {
+    top: 1vh;
+    left: 1vw;
+  }
+
+  .logo-image {
+    width: clamp(100%, 20vw, 100%);
+  }
+
+
+  .button-container {
+    margin-top: 20px;
+    flex-direction: column;
+    gap: 2vh;
+  }
+
+  .button-container p {
+    line-height: 30px;
+    margin-top: 70px;
+  }
+
+  .coming-soon-btn {
+    width: 200px;
+    font-size: clamp(8px, 2.5vw, 14px);
+    padding: clamp(5px, 1.5vw, 8px) clamp(10px, 3vw, 15px);
+  }
+
+  #social-links {
+    margin-top: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  #faq-section {
+    width: 95%;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .main-section {
+    margin-top: 5%;
+  }
+  
+  .logo-container {
+    width: 200px;
+    height: 200px;
+  }
+
+  .logo-image {
+    width: clamp(50px, 20vw, 100px);
+    height: clamp(30px, 12vw, 70px);
+  }
+
+  .button-container {
+    margin-top: 20px;
+    flex-direction: column;
+    gap: 2vh;
+  }
+
+  .button-container a {
+    line-height: 30px;
+  }
+
+  .coming-soon-btn {
+    width: 200px;
+    font-size: clamp(8px, 2.5vw, 14px);
+    padding: clamp(5px, 1.5vw, 8px) clamp(10px, 3vw, 15px);
+  }
+
+  #scroll-text {
+    font-size: clamp(15px, 5vw, 30px);
+  }
+
+  #faq-section h2 {
+    font-size: clamp(12px, 2.5vw, 18px);
+  }
+
+
+
+}

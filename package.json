@@ -1,0 +1,39 @@
+{
+  "name": "appnadxel",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@reown/appkit": "^1.7.3",
+    "@reown/appkit-adapter-wagmi": "^1.7.3",
+    "@tanstack/react-query": "^5.74.3",
+    "@walletconnect/ethereum-provider": "^2.19.4",
+    "dotenv": "^16.5.0",
+    "ethers": "^6.13.5",
+    "express": "^5.1.0",
+    "next": "^15.3.0",
+    "pino-pretty": "^11.2.2",
+    "punycode": "^2.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.134.0",
+    "wagmi": "^2.14.16",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.134.0",
+    "@types/web3": "^1.2.2",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.6",
+    "typescript": "^5"
+  }
+}
