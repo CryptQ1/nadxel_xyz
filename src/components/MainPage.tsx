@@ -40,12 +40,13 @@ export default function MainPage() {
       </header>
       <main className="main-section">
         <div className="button-container">
-          <p>PLAY or APPLY for Whitelist !</p>
+          <p>PLAY or APPLY for Whitelist</p>
         </div>
         <div className="button-container">
-          <button className="coming-soon-btn" onClick={() => router.push('/game')} >Play(soon)</button>
+          <button className="coming-soon-btn"  >Play(soon)</button>
+          {/* onClick={() => router.push('/game')} */}
           <Link href="https://forms.gle/rhqhfiLyHaR2hhdy5" target="_blank">
-            <button className="coming-soon-btn">Apply</button>
+            <button className="coming-soon-btn">WHITELIST</button>
           </Link>
         </div>
         <div id="info-section">

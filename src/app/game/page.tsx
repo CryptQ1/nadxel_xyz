@@ -1,7 +1,7 @@
 // app/game/page.tsx
 'use client';
 
-import { useEffect, useRef, useState ,useMemo  } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import * as THREE from 'three';
 import styles from '../../styles/Game.module.css';
@@ -84,7 +84,7 @@ export default function Game() {
     const updateCamera = () => {
       const aspect = window.innerWidth / window.innerHeight;
       window.camera.aspect = aspect;
-      window.camera.position.set(20, 15, 15); // Sửa lỗi `amera`
+      window.camera.position.set(20, 15, 15);
       window.camera.lookAt(0, 0, 0);
       window.camera.rotation.x = -Math.PI / 2.5;
       window.camera.rotation.z = Math.PI / 1.1;
@@ -213,7 +213,6 @@ export default function Game() {
         setGameOver(true);
         console.log('Game over, preparing to send score:', { score: window.score, walletAddress });
         if (walletAddress && window.score > 0) {
-          // Gửi điểm lên server để lấy chữ ký và gửi lên blockchain
           const messageElement = document.getElementById('initial-message')!;
           sendScoreToServer(window.score, walletAddress, messageElement);
         } else {
@@ -281,21 +280,31 @@ export default function Game() {
       loadingBar.classList.add('active');
     }
     if (initialMessage) {
-      initialMessage.textContent = 'Please confirm the transaction...';
+      initialMessage.textContent = 'Please confirm the transaction in your wallet...';
     }
 
+    // CHANGED: Bọc writeContract trong try-catch để xử lý lỗi chi tiết
     try {
-      writeContract({
+      await writeContract({
         address: contractAddress,
         abi: contractABI,
         functionName: 'startGame',
         value: BigInt(playFee),
       });
-    } catch (err) {
-      console.error('Error during transaction:', err);
-      setError('Failed to start game! Transaction error.');
-      if (initialMessage) {
-        initialMessage.textContent = 'Failed to start game! Please try again.';
+    } catch (err: any) {
+      console.error('Transaction error:', err);
+      // Kiểm tra lỗi từ chối giao dịch
+      if (err.message.includes('User denied transaction signature') || err.message.includes('User rejected the request')) {
+        if (initialMessage) {
+          initialMessage.textContent = 'You rejected the transaction. Please confirm to play.';
+        }
+        setError('Transaction rejected by user.');
+      } else {
+        // Các lỗi khác
+        if (initialMessage) {
+          initialMessage.textContent = 'Failed to start game. Please try again.';
+        }
+        setError('Transaction failed: ' + (err.message || 'Unknown error'));
       }
       if (loadingBar) {
         loadingBar.style.display = 'none';
@@ -304,13 +313,21 @@ export default function Game() {
     }
   };
 
-  // Xử lý xác nhận giao dịch
+  // CHANGED: Xử lý lỗi giao dịch trong useEffect để hiển thị thông báo ngắn gọn
   useEffect(() => {
     const loadingBar = document.getElementById('loading-bar')!;
+    const initialMessage = document.getElementById('initial-message')!;
+
     if (txError) {
       console.error('Transaction error:', txError);
-      setError(txError.message);
-      document.getElementById('initial-message')!.textContent = txError.message;
+      // Kiểm tra lỗi từ chối giao dịch
+      if (txError.message.includes('User denied transaction signature') || txError.message.includes('User rejected the request')) {
+        initialMessage.textContent = 'You rejected the transaction. Please confirm to play.';
+        setError('Transaction rejected by user.');
+      } else {
+        initialMessage.textContent = 'Transaction failed. Please try again.';
+        setError('Transaction error: ' + (txError.message || 'Unknown error'));
+      }
       loadingBar.style.display = 'none';
       loadingBar.classList.remove('active');
       return;
@@ -318,8 +335,7 @@ export default function Game() {
 
     if (isConfirmed) {
       console.log('Transaction confirmed:', hash);
-      document.getElementById('initial-message')!.textContent = 'Transaction successful! Starting game...';
-      // Chuyển sang màn hình game
+      initialMessage.textContent = 'Transaction successful! Starting game...';
       document.getElementById('initial-screen')!.style.display = 'none';
       document.getElementById('game-screen')!.style.display = 'flex';
       resetGameData();
@@ -331,7 +347,7 @@ export default function Game() {
         window.clickCooldown = false;
         loadingBar.style.display = 'none';
         loadingBar.classList.remove('active');
-        document.getElementById('initial-message')!.textContent = '';
+        initialMessage.textContent = '';
         console.log('Game started, loading bar hidden');
       }, 200);
     }
@@ -354,7 +370,6 @@ export default function Game() {
     setGameOver(false);
     document.getElementById('game-screen')!.style.display = 'none';
     document.getElementById('initial-screen')!.style.display = 'flex';
-    // Xóa scene và làm mới canvas
     if (window.scene) {
       while (window.scene.children.length > 0) {
         window.scene.remove(window.scene.children[0]);
